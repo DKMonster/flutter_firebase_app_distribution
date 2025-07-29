@@ -104,20 +104,5 @@
 - GitHub Issues
 - Pull Requests
 
-## 📄 授權
-
-本專案採用 MIT License 授權 - 詳見 [LICENSE](LICENSE) 檔案
-
-簡單來說，你可以：
-- ✅ 商業使用
-- ✅ 修改
-- ✅ 分發
-- ✅ 私人使用
-
-唯一要求：
-- 📋 保留版權和授權聲明
-
-更多授權選擇請參考 [LICENSE-GUIDE.md](LICENSE-GUIDE.md)
-
 ---
 最後更新：2025-07-29
