@@ -66,7 +66,7 @@ check_flutter_flavors() {
 # 函數：部署到 Firebase App Distribution（無 Flavor 版本）
 deploy_to_firebase_no_flavor() {
     local apk_path=$1
-    
+
     print_message $BLUE "部署 Android APK 到 Firebase App Distribution..."
     
     # 準備 Firebase 命令

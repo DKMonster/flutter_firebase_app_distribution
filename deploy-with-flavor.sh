@@ -63,38 +63,21 @@ get_version() {
     local yaml_file="pubspec.yaml"
     if [ -f "$yaml_file" ]; then
         version=$(grep "^version:" "$yaml_file" | sed 's/version: //')
-        print_message $BLUE "📦 當前版本: $version"
+        # 輸出訊息到 stderr 避免干擾返回值
+        print_message $BLUE "📦 當前版本: $version" >&2
         echo "$version"
     else
         print_message $RED "錯誤: 找不到 pubspec.yaml 檔案"
+        print_message $YELLOW "請確保在 Flutter 專案根目錄下執行此腳本"
+        print_message $YELLOW "當前目錄: $(pwd)"
         exit 1
     fi
-}
-
-# 從版本字串中取得 build number
-get_build_number() {
-    local version=$1
-    # 從版本字串中提取 build number (1.2.0+129 -> 129)
-    build_number=$(echo "$version" | cut -d'+' -f2)
-    
-    # 如果沒有 build number，使用預設值 1
-    if [ -z "$build_number" ] || [ "$build_number" = "$version" ]; then
-        build_number="1"
-        print_message $YELLOW "警告: pubspec.yaml 中沒有指定 build number，使用預設值 1"
-    fi
-    
-    echo "$build_number"
 }
 
 # 建置 APK 或 AAB
 build_app() {
     local flavor=$1
     local build_type=${2:-apk}  # 預設建置 APK
-    local version=$3
-    
-    # 從版本字串中取得 build number
-    local build_number=$(get_build_number "$version")
-    print_message $YELLOW "📝 使用 Build Number: $build_number"
 
     print_message $BLUE "🔨 開始建置 $flavor $build_type..."
 
@@ -111,7 +94,6 @@ build_app() {
         print_message $BLUE "建置 AAB (App Bundle)..."
         flutter build appbundle \
             --flavor $flavor \
-            --build-number=$build_number \
             --release
 
         # AAB 檔案位置
@@ -120,7 +102,6 @@ build_app() {
         print_message $BLUE "建置 APK..."
         flutter build apk \
             --flavor $flavor \
-            --build-number=$build_number \
             --release
 
         # APK 檔案位置
@@ -327,11 +308,11 @@ main() {
         deploy_to_firebase "$flavor" "$build_type" "$release_notes"
     elif [ "$build_only" = true ]; then
         # 只建置
-        build_app "$flavor" "$build_type" "$version"
+        build_app "$flavor" "$build_type"
         print_message $BLUE "📦 建置完成，跳過部署"
     else
         # 建置並部署
-        build_app "$flavor" "$build_type" "$version"
+        build_app "$flavor" "$build_type"
         deploy_to_firebase "$flavor" "$build_type" "$release_notes"
     fi
 
